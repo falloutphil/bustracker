@@ -123,8 +123,7 @@ def printToMatrix(grid, stringInList, starty = 0, startx = 0):
             for xpos, bit in enumerate(bitRow, startx + letter * len(bitRow) + letter):
                 grid.setPixel(ypos, xpos, bit) 
 
-# Take the json and iterate through filter for the bus in question and
-# return "count" nearest results in minutes
+# Take the json and return "count" closest results in minutes
 # Inputs are strings so convert to ints for sort
 def get_bus_times(*rest_urls, **kwargs):
     count = kwargs.get('count', 2)
