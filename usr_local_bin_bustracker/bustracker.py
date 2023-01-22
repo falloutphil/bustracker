@@ -118,9 +118,9 @@ def handleDue(estimatedTime):
     return estimatedTime
 
 def printToMatrix(grid, stringInList, starty = 0, startx = 0):
-    for letter,char in enumerate(handleDue(stringInList)):
-        for ypos,bitRow in enumerate(font[char], starty):
-            for xpos,bit in enumerate(bitRow, startx+letter*len(bitRow)+letter):
+    for letter, char in enumerate(handleDue(stringInList)):
+        for ypos, bitRow in enumerate(font[char], starty):
+            for xpos, bit in enumerate(bitRow, startx + letter * len(bitRow) + letter):
                 grid.setPixel(ypos, xpos, bit) 
 
 # Take the json and iterate through filter for the bus in question and
@@ -138,7 +138,7 @@ rhs = EightByEight(address=0x71)
 # Use this to find a bus stop of interest
 # https://tfl.gov.uk/tfl/syndication/feeds/bus-stops.csv
 # Petersfield Road
-url_e3_pr  = 'https://api.tfl.gov.uk/line/e3/arrivals/490010968V?direction=outbound&app_id=XXXX&app_key=XXXX'
+url_e3_pr = 'https://api.tfl.gov.uk/line/e3/arrivals/490010968V?direction=outbound&app_id=XXXX&app_key=XXXX'
 # Meon Road
 url_440_mr = 'https://api.tfl.gov.uk/line/440/arrivals/490010968W?direction=outbound&app_id=XXXX&app_key=XXXX'
 # 490003083G ACTON OLD TOWN HALL (westbound)
@@ -156,13 +156,13 @@ while True:
         # a specific route.
         buses = izip_longest(*next_buses_by_route, fillvalue='??')
         # iterator that flips between left and right hand grid objects
-        sides = cycle([lhs,rhs])
+        sides = cycle([lhs, rhs])
         # enumerate to get a y-axis coordinate reference
         for bus_column, get_side in zip([enumerate(bus) for bus in buses], sides):
             for ymod, wait in bus_column:
                printToMatrix(get_side, wait, ypos)
-               ypos+=(6-ymod)
-            ypos=0
+               ypos += 6 - ymod
+            ypos = 0
     except:
         print >> stderr, 'Ooops Python Threw-up, handling and restarting loop...'
     
