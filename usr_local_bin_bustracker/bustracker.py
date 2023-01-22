@@ -112,23 +112,23 @@ font = {
 
 }
 
-def handleDue( estimatedTime ):
+def handleDue(estimatedTime):
     if estimatedTime == '0':
         estimatedTime = '*'
     return estimatedTime
 
-def printToMatrix( grid, stringInList, starty=0, startx=0 ):
-    for letter,char in enumerate( handleDue(stringInList) ):
+def printToMatrix(grid, stringInList, starty = 0, startx = 0):
+    for letter,char in enumerate(handleDue(stringInList)):
         for ypos,bitRow in enumerate(font[char], starty):
-            for xpos,bit in enumerate(bitRow,startx+letter*len(bitRow)+letter):
-                grid.setPixel(ypos,xpos,bit) 
+            for xpos,bit in enumerate(bitRow, startx+letter*len(bitRow)+letter):
+                grid.setPixel(ypos, xpos, bit) 
 
 # Take the json and iterate through filter for the bus in question and
 # return "count" nearest results in minutes
 # Inputs are strings so convert to ints for sort
 def get_bus_times(*rest_urls, **kwargs):
     count = kwargs.get('count', 2)
-    json_data_list = [loads(response.read()) for response in [ urlopen(url) for url in rest_urls]]
+    json_data_list = [loads(response.read()) for response in [urlopen(url) for url in rest_urls]]
     return [sorted([str(buses['timeToStation']/60) for buses in data], key=int)[:count] for data in json_data_list]
 
 # Dot Matrix grid is split into two vertical columns
