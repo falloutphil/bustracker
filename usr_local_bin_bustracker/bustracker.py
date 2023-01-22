@@ -158,9 +158,9 @@ while True:
         # iterator that flips between left and right hand grid objects
         sides = cycle([lhs, rhs])
         # enumerate to get a y-axis coordinate reference
-        for bus_column, get_side in zip([enumerate(bus) for bus in buses], sides):
+        for bus_column, grid in zip([enumerate(bus) for bus in buses], sides):
             for ymod, wait in bus_column:
-               printToMatrix(get_side, wait, ypos)
+               printToMatrix(grid, wait, ypos)
                ypos += 6 - ymod
             ypos = 0
     except:
