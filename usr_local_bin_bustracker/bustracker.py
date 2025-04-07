@@ -4,7 +4,7 @@
 
 from Adafruit_8x8 import EightByEight
 from time import sleep
-from urllib import urlopen
+from urllib2 import Request, urlopen
 from json import loads
 from sys import stderr
 from itertools import izip_longest, cycle
@@ -112,7 +112,8 @@ font = {
 
 }
 
-def handleDue(estimatedTime):
+
+def handleDue( estimatedTime ):
     if estimatedTime == '0':
         estimatedTime = '*'
     return estimatedTime
@@ -121,27 +122,33 @@ def printToMatrix(grid, stringInList, starty = 0, startx = 0):
     for letter, char in enumerate(handleDue(stringInList)):
         for ypos, bitRow in enumerate(font[char], starty):
             for xpos, bit in enumerate(bitRow, startx + letter * len(bitRow) + letter):
-                grid.setPixel(ypos, xpos, bit) 
+                grid.setPixel(ypos, xpos, bit)
 
 # Take the json and return "count" closest results in minutes
 # Inputs are strings so convert to ints for sort
 def get_bus_times(*rest_urls, **kwargs):
     count = kwargs.get('count', 2)
-    json_data_list = [loads(response.read()) for response in [urlopen(url) for url in rest_urls]]
+    json_data_list = [loads(response.read()) for response in [ urlopen(req) for req in rest_urls]]
     return [sorted([str(buses['timeToStation']/60) for buses in data], key=int)[:count] for data in json_data_list]
 
 # Dot Matrix grid is split into two vertical columns
 lhs = EightByEight(address=0x70)
 rhs = EightByEight(address=0x71)
 
+# https://tfl.gov.uk/tfl/syndication/feeds/bus-stops.csv
+
+headers = {'User-Agent': 'Mozilla/5.0'}
+def get_request(url):
+    return Request(url, headers=headers)
+
 # Use this to find a bus stop of interest
 # https://tfl.gov.uk/tfl/syndication/feeds/bus-stops.csv
 # Petersfield Road
-url_e3_pr = 'https://api.tfl.gov.uk/line/e3/arrivals/490010968V?direction=outbound&app_id=XXXX&app_key=XXXX'
+url_e3_pr = get_request('https://api.tfl.gov.uk/line/e3/arrivals/490010968V?direction=outbound&app_id=XXXX&app_key=XXXX')
 # Meon Road
-url_440_mr = 'https://api.tfl.gov.uk/line/440/arrivals/490010968W?direction=outbound&app_id=XXXX&app_key=XXXX'
+url_440_mr = get_request('https://api.tfl.gov.uk/line/440/arrivals/490010968W?direction=outbound&app_id=XXXX&app_key=XXXX')
 # 490003083G ACTON OLD TOWN HALL (westbound)
-url_266_th_west = 'https://api.tfl.gov.uk/line/266/arrivals/490003083G?direction=outbound&app_id=XXXX&app_key=XXXX'
+url_266_th_west = get_request('https://api.tfl.gov.uk/line/266/arrivals/490003083G?direction=outbound&app_id=XXXX&app_key=XXXX')
 
 
 while True:
@@ -164,10 +171,5 @@ while True:
             ypos = 0
     except:
         print >> stderr, 'Ooops Python Threw-up, handling and restarting loop...'
-    
+
     sleep(20)
-
-
-
-
-
